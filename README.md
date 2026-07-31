@@ -32,12 +32,12 @@ com.cowart.configuration-tools
 ### 通过 Git URL 安装
 
 ```text
-https://github.com/liuyan7669/unity-configuration-tools.git#1.0.0
+https://github.com/liuyan7669/unity-configuration-tools.git#1.0.1
 ```
 
 ## 创建示例配置
 
-安装后可通过 Unity 菜单 `Tools > 配置示例` 创建以下文件：
+安装后可通过 Unity 菜单 `Cowart > 配置模板` 创建以下文件：
 
 - `dialogues.json`
 - `questions.json`

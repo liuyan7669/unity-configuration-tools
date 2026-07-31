@@ -361,7 +361,7 @@ namespace Cowart.ConfigurationTools
         /// <summary>
         /// 在 StreamingAssets 目录下创建选择题配置示例文件。
         /// </summary>
-        [MenuItem("Tools/配置示例/创建 questions.json 示例")]
+        [MenuItem("Cowart/配置模板/创建 questions.json 示例")]
         private static void CreateQuestionsJsonDemo()
         {
             CreateDemoJson(DemoFileName, DemoJson);

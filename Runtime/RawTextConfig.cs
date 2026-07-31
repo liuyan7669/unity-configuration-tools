@@ -174,7 +174,7 @@ public class RawTextConfig
     /// <summary>
     /// 在 StreamingAssets 目录下创建原始文本配置示例文件。
     /// </summary>
-    [MenuItem("Tools/配置示例/创建 raw_text.json 示例")]
+    [MenuItem("Cowart/配置模板/创建 raw_text.json 示例")]
     private static void CreateRawTextJsonDemo()
     {
         CreateDemoJson(DemoFileName, DemoJson);
