@@ -1,8 +1,8 @@
 {
   "name": "com.cowart.configuration-tools",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "displayName": "Configuration Tools",
-  "description": "提供对话、题目、提示和原始文本配置的数据结构、查询接口与示例文件生成工具。",
+  "description": "提供通用 JSON 配置加载，以及对话、题目和提示配置的数据结构与查询接口。",
   "unity": "2021.3",
   "author": {
     "name": "Cowart"

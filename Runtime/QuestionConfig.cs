@@ -23,8 +23,19 @@ namespace Cowart.ConfigurationTools
     {
         private sealed class LoadRequestState
         {
+            /// <summary>
+            /// 当前执行中的网络请求。
+            /// </summary>
             public UnityWebRequest request;
+
+            /// <summary>
+            /// 当前请求是否已经被取消。
+            /// </summary>
             public bool isCancelled;
+
+            /// <summary>
+            /// 取消请求时是否调用完成回调。
+            /// </summary>
             public bool invokeCallbackWhenCancelled;
         }
 
@@ -83,6 +94,8 @@ namespace Cowart.ConfigurationTools
         /// <summary>
         /// 从指定地址异步读取并解析选择题 JSON 配置。
         /// </summary>
+        /// <param name="filePath">JSON 文件的完整路径或 URL。</param>
+        /// <param name="onCompleted">读取完成后的回调，成功时参数为 true。</param>
         public void ReadJsonFileAsync(string filePath, Action<bool> onCompleted)
         {
             if (string.IsNullOrWhiteSpace(filePath))
@@ -138,11 +151,19 @@ namespace Cowart.ConfigurationTools
             };
         }
 
+        /// <summary>
+        /// 强制停止当前正在进行的选择题配置加载。
+        /// </summary>
         public void StopLoading()
         {
             CancelActiveLoad(true);
         }
 
+        /// <summary>
+        /// 停止当前加载并重新读取指定的选择题配置。
+        /// </summary>
+        /// <param name="filePath">JSON 文件的完整路径或 URL。</param>
+        /// <param name="onCompleted">重新加载完成后的回调，成功时参数为 true。</param>
         public void ReloadJsonFileAsync(string filePath, Action<bool> onCompleted)
         {
             ReadJsonFileAsync(filePath, onCompleted);
