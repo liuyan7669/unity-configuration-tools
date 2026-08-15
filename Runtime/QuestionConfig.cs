@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 
 #if UNITY_EDITOR
 using System.IO;
@@ -21,25 +20,21 @@ namespace Cowart.ConfigurationTools
     [Serializable]
     public class QuestionConfig
     {
-        private sealed class LoadRequestState
+        [NonSerialized]
+        private TextLoader textLoader;
+
+        private TextLoader Loader
         {
-            /// <summary>
-            /// 当前执行中的网络请求。
-            /// </summary>
-            public UnityWebRequest request;
+            get
+            {
+                if (textLoader == null)
+                {
+                    textLoader = new TextLoader();
+                }
 
-            /// <summary>
-            /// 当前请求是否已经被取消。
-            /// </summary>
-            public bool isCancelled;
-
-            /// <summary>
-            /// 取消请求时是否调用完成回调。
-            /// </summary>
-            public bool invokeCallbackWhenCancelled;
+                return textLoader;
+            }
         }
-
-        private LoadRequestState activeLoadRequest;
 
         /// <summary>
         /// 选择题列表。
@@ -62,7 +57,7 @@ namespace Cowart.ConfigurationTools
         /// <summary>
         /// 当前是否正在加载选择题配置。
         /// </summary>
-        public bool IsLoading => activeLoadRequest != null;
+        public bool IsLoading => Loader.IsLoading;
 
         /// <summary>
         /// 读取选择题 JSON 配置内容。
@@ -98,57 +93,16 @@ namespace Cowart.ConfigurationTools
         /// <param name="onCompleted">读取完成后的回调，成功时参数为 true。</param>
         public void ReadJsonFileAsync(string filePath, Action<bool> onCompleted)
         {
-            if (string.IsNullOrWhiteSpace(filePath))
+            Loader.LoadAsync(filePath, success =>
             {
-                Debug.LogError("选择题 JSON 文件路径不能为空。");
-                onCompleted?.Invoke(false);
-                return;
-            }
-
-            CancelActiveLoad(false);
-
-            string requestPath = filePath.Contains("://") || filePath.StartsWith("jar:")
-                ? filePath
-                : new Uri(filePath).AbsoluteUri;
-
-            UnityWebRequest request = UnityWebRequest.Get(requestPath);
-            LoadRequestState requestState = new LoadRequestState { request = request };
-            activeLoadRequest = requestState;
-
-            UnityWebRequestAsyncOperation operation = request.SendWebRequest();
-            operation.completed += _ =>
-            {
-                try
+                if (!success)
                 {
-                    if (requestState.isCancelled)
-                    {
-                        if (requestState.invokeCallbackWhenCancelled)
-                        {
-                            onCompleted?.Invoke(false);
-                        }
-
-                        return;
-                    }
-
-                    if (request.result != UnityWebRequest.Result.Success)
-                    {
-                        Debug.LogError($"读取选择题 JSON 文件失败：{request.error}\n{filePath}");
-                        onCompleted?.Invoke(false);
-                        return;
-                    }
-
-                    onCompleted?.Invoke(ReadJson(request.downloadHandler.text));
+                    onCompleted?.Invoke(false);
+                    return;
                 }
-                finally
-                {
-                    if (ReferenceEquals(activeLoadRequest, requestState))
-                    {
-                        activeLoadRequest = null;
-                    }
 
-                    request.Dispose();
-                }
-            };
+                onCompleted?.Invoke(ReadJson(Loader.Content));
+            });
         }
 
         /// <summary>
@@ -156,7 +110,7 @@ namespace Cowart.ConfigurationTools
         /// </summary>
         public void StopLoading()
         {
-            CancelActiveLoad(true);
+            Loader.StopLoading();
         }
 
         /// <summary>
@@ -167,20 +121,6 @@ namespace Cowart.ConfigurationTools
         public void ReloadJsonFileAsync(string filePath, Action<bool> onCompleted)
         {
             ReadJsonFileAsync(filePath, onCompleted);
-        }
-
-        private void CancelActiveLoad(bool invokeCallback)
-        {
-            LoadRequestState requestState = activeLoadRequest;
-            if (requestState == null)
-            {
-                return;
-            }
-
-            activeLoadRequest = null;
-            requestState.isCancelled = true;
-            requestState.invokeCallbackWhenCancelled = invokeCallback;
-            requestState.request.Abort();
         }
 
         /// <summary>

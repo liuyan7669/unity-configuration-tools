@@ -1,6 +1,11 @@
 using System;
 using UnityEngine;
-using UnityEngine.Networking;
+
+#if UNITY_EDITOR
+using System.IO;
+using System.Text;
+using UnityEditor;
+#endif
 
 namespace Cowart.ConfigurationTools
 {
@@ -11,14 +16,7 @@ namespace Cowart.ConfigurationTools
     /// <typeparam name="T">使用 JsonUtility 反序列化的配置类型。</typeparam>
     public sealed class JsonConfigLoader<T> where T : class
     {
-        private sealed class LoadRequestState
-        {
-            public UnityWebRequest request;
-            public bool isCancelled;
-            public bool invokeCallbackWhenCancelled;
-        }
-
-        private LoadRequestState activeLoadRequest;
+        private readonly TextLoader textLoader = new TextLoader();
 
         /// <summary>
         /// 最近一次成功解析的配置数据。
@@ -26,9 +24,14 @@ namespace Cowart.ConfigurationTools
         public T Config { get; private set; }
 
         /// <summary>
+        /// 最近一次成功读取的原始 JSON 文本。
+        /// </summary>
+        public string RawContent => textLoader.Content;
+
+        /// <summary>
         /// 当前是否正在加载配置文件。
         /// </summary>
-        public bool IsLoading => activeLoadRequest != null;
+        public bool IsLoading => textLoader.IsLoading;
 
         /// <summary>
         /// 读取并解析 JSON 配置内容。
@@ -69,70 +72,16 @@ namespace Cowart.ConfigurationTools
         /// <param name="onCompleted">读取完成后的回调，成功时参数为 true。</param>
         public void ReadJsonFileAsync(string filePath, Action<bool> onCompleted)
         {
-            if (string.IsNullOrWhiteSpace(filePath))
+            textLoader.LoadAsync(filePath, success =>
             {
-                Debug.LogError($"{typeof(T).Name} JSON 配置文件路径不能为空。");
-                onCompleted?.Invoke(false);
-                return;
-            }
-
-            CancelActiveLoad(false);
-
-            string requestPath;
-            try
-            {
-                requestPath = filePath.Contains("://") || filePath.StartsWith("jar:")
-                    ? filePath
-                    : new Uri(filePath).AbsoluteUri;
-            }
-            catch (Exception exception)
-            {
-                Debug.LogError($"{typeof(T).Name} JSON 配置文件路径无效：{exception.Message}\n{filePath}");
-                onCompleted?.Invoke(false);
-                return;
-            }
-
-            UnityWebRequest request = UnityWebRequest.Get(requestPath);
-            LoadRequestState requestState = new LoadRequestState
-            {
-                request = request
-            };
-            activeLoadRequest = requestState;
-
-            UnityWebRequestAsyncOperation operation = request.SendWebRequest();
-            operation.completed += _ =>
-            {
-                try
+                if (!success)
                 {
-                    if (requestState.isCancelled)
-                    {
-                        if (requestState.invokeCallbackWhenCancelled)
-                        {
-                            onCompleted?.Invoke(false);
-                        }
-
-                        return;
-                    }
-
-                    if (request.result != UnityWebRequest.Result.Success)
-                    {
-                        Debug.LogError($"读取 {typeof(T).Name} JSON 配置文件失败：{request.error}\n{filePath}");
-                        onCompleted?.Invoke(false);
-                        return;
-                    }
-
-                    onCompleted?.Invoke(ReadJson(request.downloadHandler.text));
+                    onCompleted?.Invoke(false);
+                    return;
                 }
-                finally
-                {
-                    if (ReferenceEquals(activeLoadRequest, requestState))
-                    {
-                        activeLoadRequest = null;
-                    }
 
-                    request.Dispose();
-                }
-            };
+                onCompleted?.Invoke(ReadJson(textLoader.Content));
+            });
         }
 
         /// <summary>
@@ -140,7 +89,7 @@ namespace Cowart.ConfigurationTools
         /// </summary>
         public void StopLoading()
         {
-            CancelActiveLoad(true);
+            textLoader.StopLoading();
         }
 
         /// <summary>
@@ -152,19 +101,48 @@ namespace Cowart.ConfigurationTools
         {
             ReadJsonFileAsync(filePath, onCompleted);
         }
+    }
 
-        private void CancelActiveLoad(bool invokeCallback)
+#if UNITY_EDITOR
+    /// <summary>
+    /// 创建可由 JsonConfigLoader 加载的通用 JSON 配置示例。
+    /// </summary>
+    internal static class JsonConfigDemoCreator
+    {
+        private const string DemoFileName = "game_config.json";
+        private const string StreamingAssetsFolderName = "StreamingAssets";
+
+        private const string DemoJson =
+@"{
+    ""title"": ""示例配置"",
+    ""items"": [
         {
-            LoadRequestState requestState = activeLoadRequest;
-            if (requestState == null)
+            ""id"": 1,
+            ""name"": ""示例项目""
+        }
+    ]
+}";
+
+        /// <summary>
+        /// 在 StreamingAssets 目录下创建通用 JSON 配置示例文件。
+        /// </summary>
+        [MenuItem("Cowart/配置模板/创建 game_config.json 示例")]
+        private static void CreateGameConfigJsonDemo()
+        {
+            string folderPath = Path.Combine(Application.dataPath, StreamingAssetsFolderName);
+            Directory.CreateDirectory(folderPath);
+
+            string filePath = Path.Combine(folderPath, DemoFileName);
+            if (File.Exists(filePath))
             {
+                Debug.LogWarning($"示例文件已存在，未覆盖：{filePath}");
                 return;
             }
 
-            activeLoadRequest = null;
-            requestState.isCancelled = true;
-            requestState.invokeCallbackWhenCancelled = invokeCallback;
-            requestState.request.Abort();
+            File.WriteAllText(filePath, DemoJson, new UTF8Encoding(false));
+            AssetDatabase.Refresh();
+            Debug.Log($"已创建示例文件：{filePath}");
         }
     }
+#endif
 }

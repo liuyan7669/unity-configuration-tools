@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 
 #if UNITY_EDITOR
 using System.IO;
@@ -21,14 +20,21 @@ namespace Cowart.ConfigurationTools
 [Serializable]
 public class TipConfig
 {
-    private sealed class LoadRequestState
-    {
-        public UnityWebRequest request;
-        public bool isCancelled;
-        public bool invokeCallbackWhenCancelled;
-    }
+    [NonSerialized]
+    private TextLoader textLoader;
 
-    private LoadRequestState activeLoadRequest;
+    private TextLoader Loader
+    {
+        get
+        {
+            if (textLoader == null)
+            {
+                textLoader = new TextLoader();
+            }
+
+            return textLoader;
+        }
+    }
 
     /// <summary>
     /// 提示文本列表。
@@ -51,7 +57,7 @@ public class TipConfig
     /// <summary>
     /// 当前是否正在加载提示文本配置。
     /// </summary>
-    public bool IsLoading => activeLoadRequest != null;
+    public bool IsLoading => Loader.IsLoading;
 
     /// <summary>
     /// 读取提示文本 JSON 配置内容。
@@ -85,81 +91,26 @@ public class TipConfig
     /// </summary>
     public void ReadJsonFileAsync(string filePath, Action<bool> onCompleted)
     {
-        if (string.IsNullOrWhiteSpace(filePath))
+        Loader.LoadAsync(filePath, success =>
         {
-            Debug.LogError("提示文本 JSON 文件路径不能为空。");
-            onCompleted?.Invoke(false);
-            return;
-        }
-
-        CancelActiveLoad(false);
-
-        string requestPath = filePath.Contains("://") || filePath.StartsWith("jar:")
-            ? filePath
-            : new Uri(filePath).AbsoluteUri;
-
-        UnityWebRequest request = UnityWebRequest.Get(requestPath);
-        LoadRequestState requestState = new LoadRequestState { request = request };
-        activeLoadRequest = requestState;
-
-        UnityWebRequestAsyncOperation operation = request.SendWebRequest();
-        operation.completed += _ =>
-        {
-            try
+            if (!success)
             {
-                if (requestState.isCancelled)
-                {
-                    if (requestState.invokeCallbackWhenCancelled)
-                    {
-                        onCompleted?.Invoke(false);
-                    }
-
-                    return;
-                }
-
-                if (request.result != UnityWebRequest.Result.Success)
-                {
-                    Debug.LogError($"读取提示文本 JSON 文件失败：{request.error}\n{filePath}");
-                    onCompleted?.Invoke(false);
-                    return;
-                }
-
-                onCompleted?.Invoke(ReadJson(request.downloadHandler.text));
+                onCompleted?.Invoke(false);
+                return;
             }
-            finally
-            {
-                if (ReferenceEquals(activeLoadRequest, requestState))
-                {
-                    activeLoadRequest = null;
-                }
 
-                request.Dispose();
-            }
-        };
+            onCompleted?.Invoke(ReadJson(Loader.Content));
+        });
     }
 
     public void StopLoading()
     {
-        CancelActiveLoad(true);
+        Loader.StopLoading();
     }
 
     public void ReloadJsonFileAsync(string filePath, Action<bool> onCompleted)
     {
         ReadJsonFileAsync(filePath, onCompleted);
-    }
-
-    private void CancelActiveLoad(bool invokeCallback)
-    {
-        LoadRequestState requestState = activeLoadRequest;
-        if (requestState == null)
-        {
-            return;
-        }
-
-        activeLoadRequest = null;
-        requestState.isCancelled = true;
-        requestState.invokeCallbackWhenCancelled = invokeCallback;
-        requestState.request.Abort();
     }
 
     /// <summary>

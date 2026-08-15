@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 
 #if UNITY_EDITOR
 using System.IO;
@@ -21,14 +20,21 @@ namespace Cowart.ConfigurationTools
     [Serializable]
     public class DialogueConfig
     {
-        private sealed class LoadRequestState
-        {
-            public UnityWebRequest request;
-            public bool isCancelled;
-            public bool invokeCallbackWhenCancelled;
-        }
+        [NonSerialized]
+        private TextLoader textLoader;
 
-        private LoadRequestState activeLoadRequest;
+        private TextLoader Loader
+        {
+            get
+            {
+                if (textLoader == null)
+                {
+                    textLoader = new TextLoader();
+                }
+
+                return textLoader;
+            }
+        }
 
         /// <summary>
         /// 对话表列表，每张表通过 tableName 标识使用范围。
@@ -51,7 +57,7 @@ namespace Cowart.ConfigurationTools
         /// <summary>
         /// 当前是否正在加载对话配置。
         /// </summary>
-        public bool IsLoading => activeLoadRequest != null;
+        public bool IsLoading => Loader.IsLoading;
 
         /// <summary>
         /// 读取对话 JSON 配置内容。
@@ -87,60 +93,16 @@ namespace Cowart.ConfigurationTools
         /// <param name="onCompleted">读取完成后的回调，成功时参数为 true。</param>
         public void ReadJsonFileAsync(string filePath, Action<bool> onCompleted)
         {
-            if (string.IsNullOrWhiteSpace(filePath))
+            Loader.LoadAsync(filePath, success =>
             {
-                Debug.LogError("对话 JSON 文件路径不能为空。");
-                onCompleted?.Invoke(false);
-                return;
-            }
-
-            CancelActiveLoad(false);
-
-            string requestPath = filePath.Contains("://") || filePath.StartsWith("jar:")
-                ? filePath
-                : new Uri(filePath).AbsoluteUri;
-
-            UnityWebRequest request = UnityWebRequest.Get(requestPath);
-            LoadRequestState requestState = new LoadRequestState
-            {
-                request = request
-            };
-            activeLoadRequest = requestState;
-
-            UnityWebRequestAsyncOperation operation = request.SendWebRequest();
-            operation.completed += _ =>
-            {
-                try
+                if (!success)
                 {
-                    if (requestState.isCancelled)
-                    {
-                        if (requestState.invokeCallbackWhenCancelled)
-                        {
-                            onCompleted?.Invoke(false);
-                        }
-
-                        return;
-                    }
-
-                    if (request.result != UnityWebRequest.Result.Success)
-                    {
-                        Debug.LogError($"读取对话 JSON 文件失败：{request.error}\n{filePath}");
-                        onCompleted?.Invoke(false);
-                        return;
-                    }
-
-                    onCompleted?.Invoke(ReadJson(request.downloadHandler.text));
+                    onCompleted?.Invoke(false);
+                    return;
                 }
-                finally
-                {
-                    if (ReferenceEquals(activeLoadRequest, requestState))
-                    {
-                        activeLoadRequest = null;
-                    }
 
-                    request.Dispose();
-                }
-            };
+                onCompleted?.Invoke(ReadJson(Loader.Content));
+            });
         }
 
         /// <summary>
@@ -148,7 +110,7 @@ namespace Cowart.ConfigurationTools
         /// </summary>
         public void StopLoading()
         {
-            CancelActiveLoad(true);
+            Loader.StopLoading();
         }
 
         /// <summary>
@@ -159,24 +121,6 @@ namespace Cowart.ConfigurationTools
         public void ReloadJsonFileAsync(string filePath, Action<bool> onCompleted)
         {
             ReadJsonFileAsync(filePath, onCompleted);
-        }
-
-        /// <summary>
-        /// 取消当前加载。
-        /// </summary>
-        /// <param name="invokeCallback">取消后是否调用当前加载的完成回调。</param>
-        private void CancelActiveLoad(bool invokeCallback)
-        {
-            LoadRequestState requestState = activeLoadRequest;
-            if (requestState == null)
-            {
-                return;
-            }
-
-            activeLoadRequest = null;
-            requestState.isCancelled = true;
-            requestState.invokeCallbackWhenCancelled = invokeCallback;
-            requestState.request.Abort();
         }
 
         /// <summary>
