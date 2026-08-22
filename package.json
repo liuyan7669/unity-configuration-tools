@@ -1,6 +1,6 @@
 {
   "name": "com.cowart.configuration-tools",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "displayName": "Configuration Tools",
   "description": "提供通用文本与 JSON 配置加载，以及对话、题目和提示配置的数据结构与查询接口。",
   "unity": "2021.3",
