@@ -33,7 +33,7 @@ com.cowart.configuration-tools
 ### 通过 Git URL 安装
 
 ```text
-https://github.com/liuyan7669/unity-configuration-tools.git#1.0.6
+https://github.com/liuyan7669/unity-configuration-tools.git#1.0.7
 ```
 
 ## 创建示例配置
