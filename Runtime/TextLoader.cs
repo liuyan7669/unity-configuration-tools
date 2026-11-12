@@ -2,11 +2,12 @@ using System;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Cowart.ConfigurationTools
+namespace Cowart.ConfigLoader
 {
     /// <summary>
     /// 从本地路径或 URL 异步读取原始文本内容。
     /// </summary>
+    [UnityEngine.Scripting.APIUpdating.MovedFrom(true, sourceNamespace: "Cowart.ConfigurationTools", sourceAssembly: "Cowart.ConfigurationTools", sourceClassName: "TextLoader")]
     public sealed class TextLoader
     {
         private sealed class LoadRequestState

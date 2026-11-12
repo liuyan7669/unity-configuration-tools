@@ -1,7 +1,7 @@
 {
-  "name": "com.cowart.configuration-tools",
-  "version": "1.0.7",
-  "displayName": "Configuration Tools",
+  "name": "com.cowart.config-loader",
+  "version": "2.0.0",
+  "displayName": "Config Loader",
   "description": "提供通用文本与 JSON 配置加载，以及对话、题目和提示配置的数据结构与查询接口。",
   "unity": "2021.3",
   "author": {
@@ -10,7 +10,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/liuyan7669/unity-configuration-tools.git"
+    "url": "https://github.com/liuyan7669/unity-config-loader.git"
   },
   "keywords": [
     "configuration",

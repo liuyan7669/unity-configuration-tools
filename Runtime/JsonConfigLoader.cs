@@ -7,13 +7,14 @@ using System.Text;
 using UnityEditor;
 #endif
 
-namespace Cowart.ConfigurationTools
+namespace Cowart.ConfigLoader
 {
     /// <summary>
     /// 通用 JSON 配置加载器。
     /// 配置字段和 JSON 结构由调用方通过泛型类型自行定义。
     /// </summary>
     /// <typeparam name="T">使用 JsonUtility 反序列化的配置类型。</typeparam>
+    [UnityEngine.Scripting.APIUpdating.MovedFrom(true, sourceNamespace: "Cowart.ConfigurationTools", sourceAssembly: "Cowart.ConfigurationTools", sourceClassName: "JsonConfigLoader")]
     public sealed class JsonConfigLoader<T> where T : class
     {
         private readonly TextLoader textLoader = new TextLoader();
@@ -107,6 +108,7 @@ namespace Cowart.ConfigurationTools
     /// <summary>
     /// 创建可由 JsonConfigLoader 加载的通用 JSON 配置示例。
     /// </summary>
+    [UnityEngine.Scripting.APIUpdating.MovedFrom(true, sourceNamespace: "Cowart.ConfigurationTools", sourceAssembly: "Cowart.ConfigurationTools", sourceClassName: "JsonConfigDemoCreator")]
     internal static class JsonConfigDemoCreator
     {
         private const string DemoFileName = "game_config.json";

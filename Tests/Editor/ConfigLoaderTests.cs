@@ -6,9 +6,9 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace Cowart.ConfigurationTools.Tests
+namespace Cowart.ConfigLoader.Tests
 {
-    public sealed class ConfigurationToolsTests
+    public sealed class ConfigLoaderTests
     {
         [Serializable]
         private sealed class SampleConfig

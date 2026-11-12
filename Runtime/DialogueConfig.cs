@@ -8,7 +8,7 @@ using System.Text;
 using UnityEditor;
 #endif
 
-namespace Cowart.ConfigurationTools
+namespace Cowart.ConfigLoader
 {
     /// <summary>
     /// 对话配置数据。
@@ -18,6 +18,7 @@ namespace Cowart.ConfigurationTools
     /// 序列化字段名与 JSON 字段一一对应，不应随 C# 命名风格调整。
     /// </remarks>
     [Serializable]
+    [UnityEngine.Scripting.APIUpdating.MovedFrom(true, sourceNamespace: "Cowart.ConfigurationTools", sourceAssembly: "Cowart.ConfigurationTools", sourceClassName: "DialogueConfig")]
     public class DialogueConfig
     {
         [NonSerialized]
@@ -278,6 +279,7 @@ namespace Cowart.ConfigurationTools
     /// 公共字段名属于 dialogues.json 的序列化契约。
     /// </remarks>
     [Serializable]
+    [UnityEngine.Scripting.APIUpdating.MovedFrom(true, sourceNamespace: "Cowart.ConfigurationTools", sourceAssembly: "Cowart.ConfigurationTools", sourceClassName: "DialogueTableData")]
     public class DialogueTableData
     {
         /// <summary>
@@ -312,6 +314,7 @@ namespace Cowart.ConfigurationTools
     /// 公共字段名属于 dialogues.json 的序列化契约。
     /// </remarks>
     [Serializable]
+    [UnityEngine.Scripting.APIUpdating.MovedFrom(true, sourceNamespace: "Cowart.ConfigurationTools", sourceAssembly: "Cowart.ConfigurationTools", sourceClassName: "DialogueItemData")]
     public class DialogueItemData
     {
         /// <summary>

@@ -1,7 +1,7 @@
 {
-  "name": "Cowart.ConfigurationTools.Editor.Tests",
+  "name": "Cowart.ConfigLoader.Editor.Tests",
   "references": [
-    "Cowart.ConfigurationTools"
+    "Cowart.ConfigLoader"
   ],
   "optionalUnityReferences": [
     "TestAssemblies"

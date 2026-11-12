@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.0] - 2026-11-12
+
+### 破坏性变更
+
+- `com.cowart.configuration-tools` 改为 `com.cowart.config-loader`；更新业务项目的安装地址、程序集和源码引用。
+- 完成包标识、目录、程序集、命名空间、脚本及文档改名，保持资源 GUID 和包独立性。
+
 ## [1.0.7] - 2026-11-08
 
 - 统一 Cowart 包图标：重新设计为按功能类别配色的圆角图标（带 { } 的配置文件），同步更新 `Icon.png` 与 `Icon@2x.png`。

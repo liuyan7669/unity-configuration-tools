@@ -8,7 +8,7 @@ using System.Text;
 using UnityEditor;
 #endif
 
-namespace Cowart.ConfigurationTools
+namespace Cowart.ConfigLoader
 {
 /// <summary>
 /// 提示文本配置数据。
@@ -18,6 +18,7 @@ namespace Cowart.ConfigurationTools
 /// 序列化字段名与 tips.json 字段一一对应，不应随 C# 命名风格调整。
 /// </remarks>
 [Serializable]
+[UnityEngine.Scripting.APIUpdating.MovedFrom(true, sourceNamespace: "Cowart.ConfigurationTools", sourceAssembly: "Cowart.ConfigurationTools", sourceClassName: "TipConfig")]
 public class TipConfig
 {
     [NonSerialized]
@@ -316,6 +317,7 @@ public class TipConfig
 /// 公共字段名属于 tips.json 的序列化契约。
 /// </remarks>
 [Serializable]
+[UnityEngine.Scripting.APIUpdating.MovedFrom(true, sourceNamespace: "Cowart.ConfigurationTools", sourceAssembly: "Cowart.ConfigurationTools", sourceClassName: "TipsItemData")]
 public class TipsItemData
 {
     /// <summary>

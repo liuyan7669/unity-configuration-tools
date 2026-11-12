@@ -1,4 +1,4 @@
-# Configuration Tools
+# Config Loader
 
 适用于 Unity 的轻量配置数据工具，提供通用文本读取、常用配置的数据结构、JSON 解析、异步文件加载和查询接口。
 
@@ -21,19 +21,19 @@
 ```text
 Name: package.openupm.com
 URL: https://package.openupm.com
-Scope: com.cowart.configuration-tools
+Scope: com.cowart.config-loader
 ```
 
 然后通过 `Add package by name` 安装：
 
 ```text
-com.cowart.configuration-tools
+com.cowart.config-loader
 ```
 
 ### 通过 Git URL 安装
 
 ```text
-https://github.com/liuyan7669/unity-configuration-tools.git#1.0.7
+https://github.com/liuyan7669/unity-config-loader.git#2.0.0
 ```
 
 ## 创建示例配置
@@ -55,7 +55,7 @@ https://github.com/liuyan7669/unity-configuration-tools.git#1.0.7
 `TextLoader` 只负责读取原始字符串，不关心 `.txt`、`.json`、`.csv`、`.xml` 或自定义扩展名：
 
 ```csharp
-using Cowart.ConfigurationTools;
+using Cowart.ConfigLoader;
 using UnityEngine;
 
 TextLoader loader = new TextLoader();
@@ -102,7 +102,7 @@ public class GameConfigItem
 
 ```csharp
 using System.IO;
-using Cowart.ConfigurationTools;
+using Cowart.ConfigLoader;
 using UnityEngine;
 
 JsonConfigLoader<GameConfig> loader = new JsonConfigLoader<GameConfig>();
@@ -121,7 +121,7 @@ loader.ReadJsonFileAsync(path, success =>
 ### 解析 JSON 字符串
 
 ```csharp
-using Cowart.ConfigurationTools;
+using Cowart.ConfigLoader;
 
 DialogueConfig config = new DialogueConfig();
 if (config.ReadJson(jsonContent))
@@ -134,7 +134,7 @@ if (config.ReadJson(jsonContent))
 
 ```csharp
 using System.IO;
-using Cowart.ConfigurationTools;
+using Cowart.ConfigLoader;
 using UnityEngine;
 
 QuestionConfig config = new QuestionConfig();
@@ -175,3 +175,11 @@ config.ReadJsonFileAsync(path, success =>
 ## 许可证
 
 本包使用 MIT License，详情参见仓库中的许可证文件。
+
+## 改名迁移（2.0.0）
+
+- 包标识：`com.cowart.configuration-tools` → `com.cowart.config-loader`。
+- Git 仓库：`https://github.com/liuyan7669/unity-configuration-tools.git` → `https://github.com/liuyan7669/unity-config-loader.git`；原有提交和旧 tag 保留。
+- 程序集、命名空间、示例和测试已同步使用新名称。业务项目需更新 manifest、asmdef 和 using；旧包与新包不可同时安装。
+- 资源 .meta GUID 保留；已改命名空间的运行时类型提供 MovedFrom 迁移标记。已有源码仍需按新命名空间修改。
+- 示例中的可选集成依赖保持可选，核心包不新增其他 Cowart 包依赖。

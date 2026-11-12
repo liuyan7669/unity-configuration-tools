@@ -8,7 +8,7 @@ using System.Text;
 using UnityEditor;
 #endif
 
-namespace Cowart.ConfigurationTools
+namespace Cowart.ConfigLoader
 {
     /// <summary>
     /// 选择题配置数据。
@@ -18,6 +18,7 @@ namespace Cowart.ConfigurationTools
     /// 序列化字段名与 questions.json 字段一一对应，不应随 C# 命名风格调整。
     /// </remarks>
     [Serializable]
+    [UnityEngine.Scripting.APIUpdating.MovedFrom(true, sourceNamespace: "Cowart.ConfigurationTools", sourceAssembly: "Cowart.ConfigurationTools", sourceClassName: "QuestionConfig")]
     public class QuestionConfig
     {
         [NonSerialized]
@@ -355,6 +356,7 @@ namespace Cowart.ConfigurationTools
     /// <summary>
     /// 选择题答案比较方式。
     /// </summary>
+    [UnityEngine.Scripting.APIUpdating.MovedFrom(true, sourceNamespace: "Cowart.ConfigurationTools", sourceAssembly: "Cowart.ConfigurationTools", sourceClassName: "AnswerComparisonMode")]
     public enum AnswerComparisonMode
     {
         /// <summary>
@@ -380,6 +382,7 @@ namespace Cowart.ConfigurationTools
     /// 公共字段名属于 questions.json 的序列化契约。
     /// </remarks>
     [Serializable]
+    [UnityEngine.Scripting.APIUpdating.MovedFrom(true, sourceNamespace: "Cowart.ConfigurationTools", sourceAssembly: "Cowart.ConfigurationTools", sourceClassName: "QuestionData")]
     public class QuestionData
     {
         /// <summary>
@@ -440,6 +443,7 @@ namespace Cowart.ConfigurationTools
     /// 公共字段名属于 questions.json 的序列化契约。
     /// </remarks>
     [Serializable]
+    [UnityEngine.Scripting.APIUpdating.MovedFrom(true, sourceNamespace: "Cowart.ConfigurationTools", sourceAssembly: "Cowart.ConfigurationTools", sourceClassName: "QuestionOptionData")]
     public class QuestionOptionData
     {
         /// <summary>
