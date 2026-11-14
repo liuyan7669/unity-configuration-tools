@@ -128,7 +128,7 @@ namespace Cowart.ConfigLoader
         /// <summary>
         /// 在 StreamingAssets 目录下创建通用 JSON 配置示例文件。
         /// </summary>
-        [MenuItem("Cowart/配置模板/创建 game_config.json 示例")]
+        [MenuItem("Cowart/配置/模板/创建 game_config.json 示例")]
         private static void CreateGameConfigJsonDemo()
         {
             string folderPath = Path.Combine(Application.dataPath, StreamingAssetsFolderName);

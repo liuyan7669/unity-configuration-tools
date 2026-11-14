@@ -1,4 +1,7 @@
 {
   "name": "Cowart.ConfigLoader",
-  "rootNamespace": "Cowart.ConfigLoader"
+  "rootNamespace": "Cowart.ConfigLoader",
+  "references": [
+    "Cowart.InspectorGroups"
+  ]
 }

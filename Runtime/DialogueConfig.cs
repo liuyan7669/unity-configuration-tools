@@ -242,7 +242,7 @@ namespace Cowart.ConfigLoader
         /// <summary>
         /// 在 StreamingAssets 目录下创建对话配置示例文件。
         /// </summary>
-        [MenuItem("Cowart/配置模板/创建 dialogues.json 示例")]
+        [MenuItem("Cowart/配置/模板/创建 dialogues.json 示例")]
         private static void CreateDialoguesJsonDemo()
         {
             CreateDemoJson(DemoFileName, DemoJson);

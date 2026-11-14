@@ -1,6 +1,6 @@
 {
   "name": "com.cowart.config-loader",
-  "version": "2.0.0",
+  "version": "3.1.0",
   "displayName": "Config Loader",
   "description": "提供通用文本与 JSON 配置加载，以及对话、题目和提示配置的数据结构与查询接口。",
   "unity": "2021.3",
@@ -17,5 +17,8 @@
     "dialogue",
     "json",
     "text"
-  ]
+  ],
+  "dependencies": {
+    "com.cowart.inspector-groups": "3.1.0"
+  }
 }

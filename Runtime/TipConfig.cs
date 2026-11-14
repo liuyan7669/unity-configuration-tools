@@ -280,7 +280,7 @@ public class TipConfig
     /// <summary>
     /// 在 StreamingAssets 目录下创建提示文本配置示例文件。
     /// </summary>
-    [MenuItem("Cowart/配置模板/创建 tips.json 示例")]
+    [MenuItem("Cowart/配置/模板/创建 tips.json 示例")]
     private static void CreateTipsJsonDemo()
     {
         CreateDemoJson(DemoFileName, DemoJson);
